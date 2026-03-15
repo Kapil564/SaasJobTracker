@@ -1,22 +1,14 @@
-import pg from "pg";
+import { neon } from "@neondatabase/serverless";
 import dotenv from "dotenv";
 dotenv.config();
 
-const { Pool } = pg;
+const sql = neon(process.env.DATABASE_URL);
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // required for Supabase
-});
-
-// Test connection on startup
-pool.connect((err, client, release) => {
-  if (err) {
-    console.error("❌ Database connection failed:", err.message);
-  } else {
-    console.log("✅ Database connected successfully");
-    release();
-  }
-});
+const pool = {
+  query: async (text, params = []) => {
+    const rows = await sql.query(text, params);
+    return { rows };
+  },
+};
 
 export default pool;

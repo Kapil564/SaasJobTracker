@@ -1,0 +1,22 @@
+import { Router } from "express";
+import {
+  register,
+  login,
+  googleAuth,
+  getMe,
+  updateProfile,
+} from "../controllers/AuthController.js";
+import { protect } from "../middleware/auth.js";
+
+const router = Router();
+
+// Public routes
+router.post("/register", register);
+router.post("/login", login);
+router.post("/google", googleAuth);
+
+// Protected routes
+router.get("/me", protect, getMe);
+router.patch("/profile", protect, updateProfile);
+
+export default router;
