@@ -1,36 +1,52 @@
 /* =============================================
-   JobTrackr Landing — Warm Theme & Utilities
+   CareerTransit Landing — Theme & Utilities
    ============================================= */
 
-@theme {
-  /* Warm palette */
-  --color-cream:           #F5F1EB;
-  --color-cream-dark:      #EDE8E0;
-  --color-dark:            #1A1814;
-  --color-body:            #6B6459;
-  --color-warm-border:     #D8D2C8;
-  --color-emphasis:        #7A6A5A;
-  --color-warm-gray:       #9A9088;
-  --color-warm-amber:      #A08A5A;
+@theme{
+  /* CareerTransit palette - Modern Slate & Indigo */
+  --color-ink: #0f172a;
+  --color-cream: #f8fafc;
+  --color-paper: #ffffff;
+  --color-gold: #4f46e5;
+  --color-gold-light: #e0e7ff;
+  --color-muted: #64748b;
+  --color-card-bg: #ffffff;
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-navy: #0ea5e9;
+  --color-green: #10b981;
+  --color-amber: #f59e0b;
 
-  /* Status colours */
-  --color-sage:            #7A9A7E;
-  --color-sage-light:      #ECF2EC;
-  --color-soft-blue:       #7A8A9A;
-  --color-soft-blue-light: #E8EDF2;
-  --color-soft-red:        #B07070;
-  --color-soft-red-light:  #F2E8E8;
+  /* Overwrite base colors for global.css */
+  --color-dark: #0f172a;
 
   /* Fonts */
-  --font-serif: 'Instrument Serif', serif;
-  --font-sans:  'DM Sans', sans-serif;
-  --font-mono:  'DM Mono', monospace;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
 
   /* Animation */
   --animate-fade-up: fade-up 0.6s ease-out both;
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }

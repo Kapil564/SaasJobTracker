@@ -1,28 +1,33 @@
-const stats = [
-  { value: '1,200+', label: 'Active users' },
-  { value: '8,400+', label: 'Applications tracked' },
-  { value: '94%',    label: 'Said it helped them' },
-  { value: 'Free',   label: 'Forever on basic plan' },
-]
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
-export default function StatsBar() {
+export default function StatsBand() {
+  const { ref, isVisible } = useScrollReveal();
+
+  const stats = [
+    { value: "$0", label: "Free during beta" },
+    { value: "4", label: "Pipeline stages built-in" },
+    { value: "∞", label: "Applications you can track" },
+    { value: "1", label: "Click to open the dashboard" }
+  ];
+
   return (
-    <section id="stats-section" className="py-14 px-10 bg-cream-dark border-y border-warm-border max-[768px]:px-5">
-      <div className="flex justify-center max-w-[900px] mx-auto max-[768px]:flex-wrap max-[768px]:gap-y-8">
-        {stats.map((s, i) => (
-          <div
-            key={s.label}
-            className={`flex-1 text-center px-4 max-[768px]:basis-1/2 max-[768px]:flex-none
-              ${i > 0 ? 'border-l border-warm-border max-[768px]:border-l-0' : ''}
-              ${i === 1 || i === 3 ? 'max-[768px]:!border-l max-[768px]:!border-warm-border' : ''}`}
-          >
-            <div className="font-serif text-[clamp(28px,4vw,36px)] font-normal text-dark tracking-[-0.02em] mb-1">
-              {s.value}
+    <div className="bg-cream py-16 border-y border-border">
+      <div 
+        ref={ref}
+        className={`max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-border scroll-reveal ${isVisible ? 'visible' : ''}`}
+      >
+        {stats.map((stat, idx) => (
+          <div key={idx} className="text-center">
+            <div className="text-4xl md:text-5xl font-serif font-black text-ink mb-2">
+              <span className="text-gold">{stat.value.charAt(0)}</span>
+              {stat.value.substring(1)}
             </div>
-            <div className="text-[13px] font-light text-body">{s.label}</div>
+            <div className="text-xs font-sans font-bold text-muted uppercase tracking-wider">
+              {stat.label}
+            </div>
           </div>
         ))}
       </div>
-    </section>
-  )
+    </div>
+  );
 }

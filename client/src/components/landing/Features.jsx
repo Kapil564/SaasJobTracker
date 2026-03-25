@@ -1,90 +1,107 @@
-const features = [
-  {
-    id: 'feature-kanban',
-    color: 'text-emphasis',
-    bgColor: 'bg-emphasis/10',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
-      </svg>
-    ),
-    title: 'Visual pipeline',
-    desc: 'Drag and drop applications across stages. See your entire job hunt at a glance.',
-  },
-  {
-    id: 'feature-cover-letter',
-    color: 'text-sage',
-    bgColor: 'bg-sage/10',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-      </svg>
-    ),
-    title: 'AI cover letters',
-    desc: 'Paste a job description and get a tailored, human-sounding cover letter in seconds.',
-  },
-  {
-    id: 'feature-match-score',
-    color: 'text-warm-amber',
-    bgColor: 'bg-warm-amber/10',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-        <circle cx="12" cy="12" r="10" />
-        <circle cx="12" cy="12" r="6" />
-        <circle cx="12" cy="12" r="2" />
-      </svg>
-    ),
-    title: 'Resume match scorer',
-    desc: 'See exactly how well your resume matches each job description with a % score.',
-  },
-  {
-    id: 'feature-red-flag',
-    color: 'text-soft-red',
-    bgColor: 'bg-soft-red/10',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
-        <line x1="4" y1="22" x2="4" y2="15" />
-      </svg>
-    ),
-    title: 'Red flag detector',
-    desc: 'AI scans job descriptions for toxic phrases, vague requirements, and warning signs.',
-  },
-]
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
-export default function Features() {
+const FeatureCard = ({ number, icon, title, description, delay }) => {
+  const { ref, isVisible } = useScrollReveal({ threshold: 0.1 });
+  
   return (
-    <section id="features-section" className="max-w-[1100px] mx-auto px-10 py-24 max-[768px]:px-5 max-[768px]:py-16">
-      <p className="text-[11px] uppercase tracking-[2px] text-body font-normal mb-3 animate-fade-up">
-        What&apos;s included
-      </p>
-      <h2 className="font-serif text-[clamp(28px,4vw,38px)] text-dark mb-12 tracking-[-1px] leading-[1.15] animate-fade-up"
-          style={{ animationDelay: '0.1s' }}>
-        Everything you need to land the role.
-      </h2>
+    <div 
+      ref={ref}
+      className={`group relative p-8 bg-paper hover:bg-cream transition-colors duration-500 scroll-reveal border-b border-r border-border ${isVisible ? 'visible' : ''}`}
+      style={{ transitionDelay: delay }}
+    >
+      <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-border flex items-center justify-center mb-6 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 z-10 relative">
+        {icon}
+      </div>
+      
+      <h3 className="text-2xl font-serif font-bold text-ink mb-3 relative z-10">{title}</h3>
+      <p className="text-muted font-sans font-light leading-relaxed relative z-10">{description}</p>
+    </div>
+  );
+};
 
-      <div className="grid grid-cols-2 gap-4 max-[768px]:grid-cols-1">
-        {features.map((f, i) => (
-          <div
-            key={f.id}
-            id={f.id}
-            className="bg-cream-dark border border-warm-border rounded-xl p-7
-              hover:-translate-y-[2px] hover:border-emphasis/25 transition-all duration-200
-              animate-fade-up max-[768px]:p-5"
-            style={{ animationDelay: `${0.15 + i * 0.08}s` }}
+export default function FeaturesSection() {
+  const { ref: headerRef, isVisible: headerVisible } = useScrollReveal();
+
+  const features = [
+    {
+      number: "01",
+      icon: (
+        <svg className="w-6 h-6 text-navy" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+        </svg>
+      ),
+      title: "Visual Kanban Board",
+      description: "Drag and drop applications across customizable stages. See your entire pipeline at a glance, from 'Saved' to 'Offer'."
+    },
+    {
+      number: "02",
+      icon: (
+        <svg className="w-6 h-6 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      title: "Deadline Reminders",
+      description: "Never miss an interview or take-home assignment. Get automated alerts for upcoming deadlines and follow-ups."
+    },
+    {
+      number: "03",
+      icon: (
+        <svg className="w-6 h-6 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+        </svg>
+      ),
+      title: "Actionable Analytics",
+      description: "Track your conversion rates at every stage. Understand where you shine and where you need to optimize your approach."
+    },
+    {
+      number: "04",
+      icon: (
+        <svg className="w-6 h-6 text-amber" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      title: "Rich Job Notes",
+      description: "Keep all your research, interview questions, and salary expectations in one place. Context is key to landing the job."
+    }
+  ];
+
+  return (
+    <section id="features" className="py-32 bg-paper border-b border-border">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid lg:grid-cols-[1fr_2fr] items-start gap-12">
+          
+          {/* Left Sticky Label */}
+          <div 
+            ref={headerRef}
+            className={`lg:sticky top-32 pr-4 scroll-reveal ${headerVisible ? 'visible' : ''}`}
           >
-            <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-5 ${f.color} ${f.bgColor}`}>
-              {f.icon}
+            <div className="text-green font-sans font-bold tracking-widest uppercase text-xs mb-4 flex items-center gap-2">
+              <span className="w-8 h-[1px] bg-green"></span>
+              Core Features
             </div>
-            <h3 className="text-[16px] font-normal text-dark mb-2">{f.title}</h3>
-            <p className="text-[14px] font-light leading-[1.65] text-body">{f.desc}</p>
+            <h2 className="text-4xl md:text-5xl font-serif font-black text-ink mb-6 leading-[1.1]">
+              Everything you need, nothing you don't.
+            </h2>
+            <p className="text-lg text-muted font-sans font-light leading-relaxed">
+              We stripped away the clutter to give you a minimal yet powerful workspace dedicated completely to landing your next role.
+            </p>
           </div>
-        ))}
+
+          {/* Right Grid */}
+          <div className="border border-border rounded-xl overflow-hidden bg-border/20">
+            <div className="grid md:grid-cols-2 gap-[1px]">
+              {features.map((feature, idx) => (
+                <FeatureCard 
+                  key={idx} 
+                  {...feature} 
+                  delay={`${idx * 150}ms`} 
+                />
+              ))}
+            </div>
+          </div>
+          
+        </div>
       </div>
     </section>
-  )
+  );
 }

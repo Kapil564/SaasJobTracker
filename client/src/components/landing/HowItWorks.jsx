@@ -1,41 +1,63 @@
-const steps = [
-  { num: '01', title: 'Create account', desc: 'Sign up free with Google or email — takes 10 seconds.' },
-  { num: '02', title: 'Add your jobs',  desc: 'Paste job links or add them manually to your pipeline.' },
-  { num: '03', title: 'Let AI work',    desc: 'Cover letters, match scores, and red flag alerts — automatic.' },
-]
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 export default function HowItWorks() {
+  const { ref, isVisible } = useScrollReveal();
+
   return (
-    <section id="how-it-works-section" className="max-w-[1100px] mx-auto px-10 py-24 max-[768px]:px-5 max-[768px]:py-16">
-      <p className="text-[11px] uppercase tracking-[2px] text-body font-normal mb-3 animate-fade-up">
-        How it works
-      </p>
-      <h2
-        className="font-serif text-[clamp(28px,4vw,38px)] text-dark mb-14 tracking-[-1px] leading-[1.15] animate-fade-up"
-        style={{ animationDelay: '0.1s' }}
-      >
-        Up and running in minutes.
-      </h2>
+    <section id="how" className="py-32 bg-ink text-cream relative overflow-hidden">
+      <div className="absolute top-0 right-1/4 w-[40rem] h-[40rem] bg-gold/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <div className="flex relative max-[768px]:flex-col max-[768px]:gap-10">
-        {/* Dashed connector */}
-        <div className="absolute top-6 z-0 border-t-2 border-dashed border-warm-border max-[768px]:hidden"
-             style={{ left: 'calc(16.666% + 24px)', right: 'calc(16.666% + 24px)' }} />
+      <div className="max-w-6xl mx-auto px-6 relative z-10">
 
-        {steps.map((s, i) => (
-          <div
-            key={s.num}
-            className="flex-1 text-center relative z-10 px-4 animate-fade-up"
-            style={{ animationDelay: `${0.15 + i * 0.1}s` }}
-          >
-            <div className="w-12 h-12 rounded-xl bg-cream-dark border border-warm-border inline-flex items-center justify-center text-[16px] font-mono font-medium text-emphasis mb-5">
-              {s.num}
-            </div>
-            <h3 className="text-[15px] font-normal text-dark mb-2">{s.title}</h3>
-            <p className="text-[13.5px] font-light text-body leading-[1.6]">{s.desc}</p>
+        <div className="text-center max-w-2xl mx-auto mb-20">
+          <div className="text-gold font-sans font-bold tracking-widest uppercase text-xs mb-4">The Process</div>
+          <h2 className="text-4xl md:text-5xl font-serif font-black text-white mb-6 leading-tight">
+            How CareerTransit works.
+          </h2>
+          <p className="text-lg text-cream/60 font-sans font-light">
+            We've designed the most intuitive workflow for job seekers. No setup required.
+          </p>
+        </div>
+
+        <div
+          ref={ref}
+          className={`relative max-w-5xl mx-auto scroll-reveal ${isVisible ? 'visible' : ''}`}
+        >
+          {/* Connector Line (Desktop) */}
+          <div className="hidden md:block absolute top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-gold/20"></div>
+
+          <div className="grid md:grid-cols-4 gap-8 text-center relative">
+            {[
+              {
+                title: "Save the job",
+                desc: "Paste a URL and drop it straight into your Kanban setup."
+              },
+              {
+                title: "Update stages",
+                desc: "Drag cards forward to automatically trigger analytics updates."
+              },
+              {
+                title: "Prep effortlessly",
+                desc: "Keep all your interview notes contextually tied to the role."
+              },
+              {
+                title: "Land the offer",
+                desc: "Ace your negotiations fully equipped with your data."
+              }
+            ].map((step, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-full bg-ink border border-gold/40 flex items-center justify-center text-xl font-serif font-bold text-gold mb-6 relative z-10 shadow-[0_0_15px_rgba(79,70,229,0.15)]">
+                  <div className="absolute inset-0 bg-gold/10 rounded-full"></div>
+                  <span className="relative z-10">{i + 1}</span>
+                </div>
+                <h3 className="text-xl font-sans font-medium text-white mb-3">{step.title}</h3>
+                <p className="text-cream/60 font-sans font-light text-sm leading-relaxed px-4">{step.desc}</p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
       </div>
     </section>
-  )
+  );
 }
