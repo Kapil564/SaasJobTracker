@@ -1,6 +1,6 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 
-const FeatureCard = ({ number, icon, title, description, delay }) => {
+const FeatureCard = ({ icon, title, description, delay }) => {
   const { ref, isVisible } = useScrollReveal({ threshold: 0.1 });
   
   return (
