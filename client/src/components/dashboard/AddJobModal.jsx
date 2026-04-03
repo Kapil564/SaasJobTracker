@@ -20,8 +20,8 @@ const AddJobModal = ({ onClose, onAddJob, addToast }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-white backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeUp" style={{ animationDuration: '0.3s' }}>
-      <div className="bg-[var(--surface)] border border-slate-200 rounded-2xl w-full max-w-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+    <div className="fixed inset-0 bg-white/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeUp" style={{ animationDuration: '0.3s' }}>
+      <div className="bg-[var(--surface)] border border-slate-200 rounded-2xl w-full max-w-lg shadow-[0_5px_20px_rgba(0,0,0,0.5)] overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
             <div className="bg-[var(--accent-purple)]/20 p-1.5 rounded-lg text-[var(--accent-purple)]">
@@ -58,7 +58,7 @@ const AddJobModal = ({ onClose, onAddJob, addToast }) => {
                 <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Location</label>
                 <div className="relative">
                   <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-[var(--accent-purple)]" />
-                  <input placeholder="eg. Remote" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[var(--accent-purple)] focus:ring-1 focus:ring-[var(--accent-purple)] transition-all placeholder:text-slate-500" />
+                  <input placeholder="eg. India" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-[var(--accent-purple)] focus:ring-1 focus:ring-[var(--accent-purple)] transition-all placeholder:text-slate-500" />
                 </div>
               </div>
               <div className="col-span-1 group">

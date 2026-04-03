@@ -1,21 +1,21 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Building2, MapPin, DollarSign, Star, Briefcase } from 'lucide-react';
+import { Building2, MapPin, DollarSign, Star, Briefcase, Edit2, Trash2 } from 'lucide-react';
 
-const JobCard = ({ job, toggleStar, isOverlay }) => {
+const JobCard = ({ job, toggleStar, isOverlay, isList }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: sortableIsDragging } = useSortable({
     id: isOverlay ? `overlay-${job.id}` : job.id,
     data: { ...job },
-    disabled: isOverlay
+    disabled: isOverlay || isList
   });
 
-  const isDragging = isOverlay ? true : sortableIsDragging;
+  const isDragging = isOverlay ? true : (isList ? false : sortableIsDragging);
 
   const style = {
-    transform: isOverlay ? undefined : CSS.Transform.toString(transform),
-    transition: isOverlay ? undefined : transition,
+    transform: (isOverlay || isList) ? undefined : CSS.Transform.toString(transform),
+    transition: (isOverlay || isList) ? undefined : transition,
     zIndex: isDragging ? 50 : 1,
-    opacity: job.status === 'rejected' && !isOverlay ? 0.6 : (isOverlay ? 1 : (isDragging ? 0.5 : 1)),
+    opacity: job.status === 'rejected' && (!isOverlay && !isList) ? 0.6 : (isOverlay ? 1 : (isDragging ? 0.5 : 1)),
     scale: isDragging ? 1.05 : 1,
     rotate: isDragging ? '2deg' : '0deg',
   };
@@ -31,11 +31,11 @@ const JobCard = ({ job, toggleStar, isOverlay }) => {
 
   return (
     <div 
-      ref={setNodeRef} 
+      ref={isList ? undefined : setNodeRef} 
       style={style} 
-      {...attributes} 
-      {...listeners} 
-      className={`relative bg-[var(--surface)] p-4 rounded-xl border ${isDragging ? 'border-[var(--accent-purple)] shadow-[0_0_20px_rgba(124,111,239,0.3)]' : 'border-slate-200 shadow-sm hover:border-slate-200'} transition-colors cursor-grab active:cursor-grabbing group group/card`}
+      {...(isList ? {} : attributes)} 
+      {...(isList ? {} : listeners)} 
+      className={`relative bg-[var(--surface)] p-4 rounded-xl border ${isDragging && !isList ? 'border-[var(--accent-purple)] shadow-[0_0_20px_rgba(124,111,239,0.3)]' : 'border-slate-200 shadow-sm hover:border-slate-200'} transition-colors ${isList ? '' : 'cursor-grab active:cursor-grabbing'} group group/card`}
     >
       {/* Notifications pulse */}
       {job.hasNotif && (
@@ -60,13 +60,29 @@ const JobCard = ({ job, toggleStar, isOverlay }) => {
           </div>
         </div>
         
-        {/* Star */}
-        <button 
-          onPointerDown={(e) => { e.stopPropagation(); toggleStar(job.id); }}
-          className={`p-1.5 rounded-full hover:bg-slate-100 transition-colors z-20 ${job.starred ? 'text-[var(--accent-yellow)]' : 'text-slate-500 hover:text-slate-500'}`}
-        >
-          <Star size={14} fill={job.starred ? 'currentColor' : 'none'} className={job.starred ? 'drop-shadow-[0_0_5px_rgba(245,181,63,0.5)]' : ''} />
-        </button>
+        {/* Actions */}
+        <div className="flex items-center -mr-1 z-20">
+          <button 
+            onPointerDown={(e) => { e.stopPropagation(); }}
+            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[var(--accent-blue)] transition-all opacity-0 group-hover/card:opacity-100 focus:opacity-100"
+            title="Edit"
+          >
+            <Edit2 size={14} />
+          </button>
+          <button 
+            onPointerDown={(e) => { e.stopPropagation(); }}
+            className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[var(--accent-red)] transition-all opacity-0 group-hover/card:opacity-100 focus:opacity-100"
+            title="Delete"
+          >
+            <Trash2 size={14} />
+          </button>
+          <button 
+            onPointerDown={(e) => { e.stopPropagation(); toggleStar(job.id); }}
+            className={`p-1.5 rounded-full hover:bg-slate-100 transition-colors ${job.starred ? 'text-[var(--accent-yellow)]' : 'text-slate-400 hover:text-slate-500'}`}
+          >
+            <Star size={14} fill={job.starred ? 'currentColor' : 'none'} className={job.starred ? 'drop-shadow-[0_0_5px_rgba(245,181,63,0.5)]' : ''} />
+          </button>
+        </div>
       </div>
 
       {/* Tags */}
