@@ -25,6 +25,14 @@ export const useJobs = () => {
     setJobs(prev => prev.map(job => job.id === id ? { ...job, starred: !job.starred } : job));
   }, []);
 
+  const deleteJob = useCallback((id) => {
+    setJobs(prev => prev.filter(job => job.id !== id));
+  }, []);
+
+  const editJob = useCallback((updatedJob) => {
+    setJobs(prev => prev.map(job => job.id === updatedJob.id ? { ...job, ...updatedJob } : job));
+  }, []);
+
   const addJob = useCallback((job) => {
     const newJob = {
       ...job,
@@ -37,5 +45,5 @@ export const useJobs = () => {
     setJobs(prev => [...prev, newJob]);
   }, []);
 
-  return { jobs, stats, updateJobStatus, toggleStar, addJob };
+  return { jobs, stats, updateJobStatus, toggleStar, addJob, deleteJob, editJob };
 };

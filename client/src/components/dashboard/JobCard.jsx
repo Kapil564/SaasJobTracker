@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Building2, MapPin, DollarSign, Star, Briefcase, Edit2, Trash2 } from 'lucide-react';
 
-const JobCard = ({ job, toggleStar, isOverlay, isList }) => {
+const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: sortableIsDragging } = useSortable({
     id: isOverlay ? `overlay-${job.id}` : job.id,
     data: { ...job },
@@ -63,14 +63,14 @@ const JobCard = ({ job, toggleStar, isOverlay, isList }) => {
         {/* Actions */}
         <div className="flex items-center -mr-1 z-20">
           <button 
-            onPointerDown={(e) => { e.stopPropagation(); }}
+            onPointerDown={(e) => { e.stopPropagation(); onEdit && onEdit(); }}
             className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[var(--accent-blue)] transition-all opacity-0 group-hover/card:opacity-100 focus:opacity-100"
             title="Edit"
           >
             <Edit2 size={14} />
           </button>
           <button 
-            onPointerDown={(e) => { e.stopPropagation(); }}
+            onPointerDown={(e) => { e.stopPropagation(); onDelete && onDelete(); }}
             className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[var(--accent-red)] transition-all opacity-0 group-hover/card:opacity-100 focus:opacity-100"
             title="Delete"
           >

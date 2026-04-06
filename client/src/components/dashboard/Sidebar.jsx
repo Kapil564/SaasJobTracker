@@ -5,8 +5,8 @@ const Sidebar = ({ activeTab = 'Dashboard', onTabChange = () => {} }) => {
     <aside className="w-[200px] h-full border-r border-slate-200 bg-[var(--surface)] shrink-0 flex flex-col p-4 z-20 hidden md:flex">
       {/* Brand */}
       <div className="flex items-center gap-2 mb-8 px-2">
-        <div className="w-8 h-8 rounded-lg bg-[var(--accent-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(124,111,239,0.3)]">
-          <LayoutDashboard size={18} className="text-white" />
+        <div className="w-10 h-6 rounded-lg bg-[var(--accent-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(124,111,239,0.3)]">
+          <LayoutDashboard size={16} className="text-white" />
         </div>
         <h1 className="text-lg font-bold tracking-tight">CareerTransit</h1>
       </div>

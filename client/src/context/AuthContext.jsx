@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
+      localStorage.setItem('token', data.token);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const { data } = await api.post('/auth/register', { name, email, password });
+      localStorage.setItem('token', data.token);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -45,9 +47,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const { data } = await api.patch('/auth/profile', profileData);
+      setUser(data.user);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.error || 'Profile update failed' };
+    }
+  };
+
   const logout = async () => {
     try {
       setUser(null);
+      localStorage.removeItem('token');
       // await api.post('/auth/logout'); // Only if backend has a persistent logout route
     } catch (error) {
       console.error('Logout failed', error);
@@ -55,7 +68,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateProfile, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

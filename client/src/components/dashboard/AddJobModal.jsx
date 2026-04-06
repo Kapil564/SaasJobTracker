@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Plus, X, Building, MapPin, DollarSign, Briefcase } from 'lucide-react';
 
-const AddJobModal = ({ onClose, onAddJob, addToast }) => {
-  const [form, setForm] = useState({ 
+const AddJobModal = ({ onClose, onSaveJob, addToast, initialData }) => {
+  const [form, setForm] = useState(initialData || { 
     role: '', 
     company: '', 
     location: '', 
@@ -14,8 +14,8 @@ const AddJobModal = ({ onClose, onAddJob, addToast }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddJob(form);
-    addToast('Job application added successfully!', 'success');
+    onSaveJob(form);
+    addToast(initialData ? 'Job updated successfully!' : 'Job application added successfully!', 'success');
     onClose();
   };
 
@@ -27,7 +27,7 @@ const AddJobModal = ({ onClose, onAddJob, addToast }) => {
             <div className="bg-[var(--accent-purple)]/20 p-1.5 rounded-lg text-[var(--accent-purple)]">
               <Briefcase size={18} />
             </div>
-            Add New Job
+            {initialData ? 'Edit Job' : 'Add New Job'}
           </h2>
           <button onClick={onClose} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
             <X size={20} />
