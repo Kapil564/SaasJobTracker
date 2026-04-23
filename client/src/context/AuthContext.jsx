@@ -15,11 +15,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuthStatus = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data } = await api.get('/auth/me');
       setUser(data.user);
     } catch {
       setUser(null);
+      localStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
@@ -47,6 +55,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (code) => {
+    try {
+      const { data } = await api.post('/auth/google', { code });
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.error || 'Google login failed' };
+    }
+  };
+
   const updateProfile = async (profileData) => {
     try {
       const { data } = await api.patch('/auth/profile', profileData);
@@ -68,7 +87,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateProfile, loading }}>
+    <AuthContext.Provider value={{ user, login, register, googleLogin, logout, updateProfile, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

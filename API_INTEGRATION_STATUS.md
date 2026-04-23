@@ -14,7 +14,7 @@ This document tracks all the endpoints available on the backend server and their
 - [x] `POST /api/auth/register` — Creates a new user account.
 - [x] `POST /api/auth/login` — Authenticates user and establishes session.
 - [x] `GET /api/auth/me` — Fetches current authenticated user data.
-- [ ] `POST /api/auth/google` — Handles Google OAuth / SSO logins.
+- [x] `POST /api/auth/google` — Handles Google OAuth / SSO logins.
 - [x] `PATCH /api/auth/profile` — Allows the user to update their profile information.
 
 ---

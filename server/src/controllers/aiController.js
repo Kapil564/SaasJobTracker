@@ -2,7 +2,6 @@ import pool from "../lib/db.js";
 
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-// ─── Helper: Call Gemini API ──────────────────────────────────────────────────
 const callGemini = async (prompt) => {
   const res = await fetch(`${GEMINI_URL}?key=${process.env.GEMINI_API_KEY}`, {
     method: "POST",
@@ -22,7 +21,6 @@ const callGemini = async (prompt) => {
   return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
 };
 
-// ─── Helper: Get application with ownership check ────────────────────────────
 const getOwnedApplication = async (applicationId, userId) => {
   const { rows } = await pool.query(
     `SELECT * FROM applications WHERE id = $1 AND user_id = $2`,
@@ -106,7 +104,7 @@ Return ONLY valid JSON, no explanation.`;
     // Save match_score to DB
     if (result.score !== undefined) {
       await pool.query(
-        `UPDATE applications SET match_score = $1, updated_at = NOW() WHERE id = $2 AND user_id = $3`,
+        `UPDATE applications SET match_score = $1 WHERE id = $2 AND user_id = $3`,
         [result.score, applicationId, userId]
       );
     }
@@ -114,7 +112,7 @@ Return ONLY valid JSON, no explanation.`;
     // Log activity
     await pool.query(
       `INSERT INTO activities (text, type, application_id) VALUES ($1, $2, $3)`,
-      [`AI scored resume match: ${result.score}%`, "AI", app.id]
+      ["AI generated match score", "AI", app.id]
     );
 
     res.json(result);
@@ -156,7 +154,7 @@ Return ONLY valid JSON array, no explanation.`;
       `INSERT INTO activities (text, type, application_id) VALUES ($1, $2, $3)`,
       ["AI generated interview prep questions", "AI", app.id]
     );
-
+    
     res.json({ questions });
   } catch (error) {
     console.error("Interview prep error:", error);
@@ -169,7 +167,6 @@ export const getRedFlags = async (req, res) => {
   try {
     const { applicationId } = req.params;
     const userId = req.user.id;
-
     const app = await getOwnedApplication(applicationId, userId);
     if (!app) return res.status(404).json({ error: "Application not found." });
 

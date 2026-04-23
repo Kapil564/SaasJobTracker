@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import Sidebar from '../components/dashboard/Sidebar';
 import Topbar from '../components/dashboard/Topbar';
-import RightPanel from '../components/dashboard/RightPanel';
 import StatsRow from '../components/dashboard/StatsRow';
 import DashboardView from '../components/dashboard/DashboardView';
 import ApplicationsView from '../components/dashboard/ApplicationsView';
@@ -80,8 +79,6 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
-
-      <RightPanel />
 
       <Toast toasts={toasts} />
 

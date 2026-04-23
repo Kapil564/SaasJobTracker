@@ -10,7 +10,6 @@ import { protect } from "../middleware/auth.js";
 
 const router = Router();
 
-// All AI routes are protected
 router.use(protect);
 
 router.get("/:applicationId/cover-letter", generateCoverLetter);

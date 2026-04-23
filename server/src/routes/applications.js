@@ -11,7 +11,6 @@ import { protect } from "../middleware/auth.js";
 
 const router = Router();
 
-// All application routes are protected
 router.use(protect);
 
 router.get("/stats", getStats);

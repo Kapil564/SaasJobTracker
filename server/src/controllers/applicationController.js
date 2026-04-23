@@ -1,11 +1,9 @@
 import pool from "../lib/db.js";
 
-// ─── GET Dashboard Stats ─────────────────────────────────────────────────────
 export const getStats = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Total counts by status
     const { rows: statusCounts } = await pool.query(
       `SELECT status, COUNT(*)::int AS count
        FROM applications
@@ -14,7 +12,6 @@ export const getStats = async (req, res) => {
       [userId]
     );
 
-    // Total applications
     const { rows: totalRows } = await pool.query(
       `SELECT COUNT(*)::int AS total FROM applications WHERE user_id = $1`,
       [userId]
@@ -118,7 +115,7 @@ export const getApplication = async (req, res) => {
       `SELECT * FROM activities WHERE application_id = $1 ORDER BY created_at DESC`,
       [id]
     );
-
+    
     res.json({ application: { ...appRows[0], activities } });
   } catch (error) {
     console.error("Get application error:", error);

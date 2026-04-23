@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function SignUpForm() {
   const [name, setName] = useState('');
@@ -9,7 +10,25 @@ export default function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
+
+  const handleGoogleLogin = useGoogleLogin({
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    flow: 'auth-code',
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      const result = await googleLogin(tokenResponse.code);
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error);
+        setIsLoading(false);
+      }
+    },
+    onError: () => {
+      setError('Google signup failed');
+    }
+  });
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -97,6 +116,7 @@ export default function SignUpForm() {
 
       <button 
         type="button"
+        onClick={() => handleGoogleLogin()}
         className="mt-6 w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-[rgba(15,23,42,0.12)] rounded-lg shadow-sm bg-white text-sm font-medium text-[#0f172a] hover:bg-[#f8fafc] transition-all"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
