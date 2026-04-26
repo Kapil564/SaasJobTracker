@@ -12,6 +12,7 @@ import {
   Search,
   Filter
 } from 'lucide-react';
+import api from '../../api/axios';
 
 export default function ResumeView() {
   const [dragActive, setDragActive] = useState(false);
@@ -19,13 +20,31 @@ export default function ResumeView() {
   const [isUploading, setIsUploading] = useState(false);
   const [form, setForm] = useState({ company: '', position: '' });
   
-  // Mock recorded resumes
-  const [resumes, setResumes] = useState([
-    { id: 1, name: 'Kapil_Google_SWE.pdf', company: 'Google', position: 'Software Engineer', date: 'Oct 12, 2026', size: '1.2 MB' },
-    { id: 2, name: 'Kapil_Frontend_Stripe.pdf', company: 'Stripe', position: 'Frontend Developer', date: 'Oct 05, 2026', size: '0.8 MB' }
-  ]);
+  const [resumes, setResumes] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const inputRef = useRef(null);
+
+  React.useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get('/api/documents');
+        if (response.status === 200) {
+          setResumes(response.data.files || []);
+        } else {
+          console.error("Failed to fetch resumes");
+        }
+      } catch (error) {
+        console.error("Error fetching resumes:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchResumes();
+  }, []);
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -53,16 +72,26 @@ export default function ResumeView() {
     }
   };
 
-  const simulateUpload = () => {
+  const uploadFile = async () => {
     if (!file) return;
     setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("company", form.company.trim());
+    formData.append("position", form.position.trim());
     
-    // Simulate API delay
-    setTimeout(() => {
-      setIsUploading(false);
+    try {
+      const response = await api.post('/api/documents/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      const data = response.data;
       
       const newResume = {
-        id: Date.now(),
+        id: data.fileId || Date.now(),
         name: file.name,
         company: form.company.trim() || 'General / Generic',
         position: form.position.trim() || 'General / Generic',
@@ -73,12 +102,26 @@ export default function ResumeView() {
       setResumes([newResume, ...resumes]);
       setFile(null);
       setForm({ company: '', position: '' });
-    }, 1200);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert(error.message);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const deleteResume = (id) => {
     setResumes(resumes.filter(r => r.id !== id));
   };
+
+  const filteredResumes = resumes.filter(r => {
+    const query = searchQuery.toLowerCase();
+    return (
+      (r.company && r.company.toLowerCase().includes(query)) ||
+      (r.name && r.name.toLowerCase().includes(query)) ||
+      (r.position && r.position.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="flex-1 min-h-0 bg-white border border-slate-200 rounded-2xl p-6 md:p-8 animate-fadeUp flex flex-col overflow-y-auto" style={{ animationDelay: '0.2s' }}>
@@ -95,20 +138,19 @@ export default function ResumeView() {
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search companies..." 
               className="pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 w-48 transition-all"
             />
           </div>
-          <button className="p-2 border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors">
-            <Filter size={16} />
-          </button>
         </div>
       </div>
       
-      <div className="flex flex-col w-full max-w-5xl mx-auto">
+      <div className="flex flex-col w-full max-w-4xl mx-auto">
         {/* Upload Area */}
         <div 
-          className={`relative border-2 border-dashed rounded-3xl p-10 flex flex-col items-center justify-center transition-all duration-300 ${
+          className={`relative border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center transition-all duration-300 ${
             dragActive 
               ? 'border-indigo-500 bg-indigo-50/50 scale-[1.01]' 
               : 'border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-slate-300'
@@ -128,17 +170,17 @@ export default function ResumeView() {
            
            {!file ? (
              <div className="text-center group">
-               <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-300 mx-auto">
-                 <UploadCloud className="text-indigo-600" size={36} />
+               <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm mb-4 border border-slate-100 group-hover:scale-110 transition-transform duration-300 mx-auto">
+                 <UploadCloud className="text-indigo-600" size={24} />
                </div>
-               <h4 className="text-xl font-bold text-slate-900 mb-2">Drag & drop your customized resume</h4>
-               <p className="text-sm text-slate-500 mb-8 max-w-[280px] mx-auto leading-relaxed">
+               <h4 className="text-lg font-bold text-slate-900 mb-1">Drag & drop your customized resume</h4>
+               <p className="text-xs text-slate-500 mb-5 max-w-[280px] mx-auto leading-relaxed">
                  We'll help you track which version you used for each application. Supports PDF and DOCX.
                </p>
                
                <button 
                  onClick={() => inputRef.current?.click()}
-                 className="px-8 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-white hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
+                 className="px-6 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-2xl hover:bg-white hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
                >
                  Browse Local Files
                </button>
@@ -192,7 +234,7 @@ export default function ResumeView() {
                    <X size={16} /> Cancel
                  </button>
                  <button 
-                   onClick={simulateUpload}
+                   onClick={uploadFile}
                    disabled={isUploading}
                    className="px-10 py-3 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
                  >
@@ -214,12 +256,22 @@ export default function ResumeView() {
                Tailored Vault
             </h4>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-              {resumes.length} Total Files
+              {filteredResumes.length} Total Files
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {resumes.map(r => (
+            {isLoading ? (
+              <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400">
+                <Loader2 className="animate-spin mb-4 text-indigo-500" size={32} />
+                <p className="text-sm font-semibold">Connecting to Google Drive...</p>
+              </div>
+            ) : filteredResumes.length === 0 ? (
+              <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400">
+                <FileText size={48} className="mb-4 opacity-20" />
+                <p className="text-sm font-semibold">{searchQuery ? "No matching resumes found." : "No resumes found in your Drive."}</p>
+              </div>
+            ) : filteredResumes.map(r => (
               <div key={r.id} className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col group hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 relative overflow-hidden">
                 <div className="flex justify-between items-start mb-5 relative z-10">
                    <div className="flex items-center gap-3 overflow-hidden">

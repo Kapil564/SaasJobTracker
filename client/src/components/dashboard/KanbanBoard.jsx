@@ -129,15 +129,6 @@ const Column = ({ col, jobs, toggleStar, onAddJob, idx, onEditJob, onDeleteJob }
             <span className="text-xs font-medium uppercase tracking-widest text-slate-500">Drop Here</span>
           </div>
         )}
-
-        {/* Add Button at bottom of column */}
-        <button 
-          onClick={onAddJob}
-          className="mt-2 w-full py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:text-slate-500 hover:bg-slate-100 hover:border-slate-200 transition-all font-bold text-sm flex items-center justify-center gap-2 group"
-        >
-          <Plus size={16} className="group-hover:rotate-90 transition-transform" />
-          Add Job
-        </button>
       </div>
     </div>
   );

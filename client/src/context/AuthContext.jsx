@@ -15,19 +15,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuthStatus = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
     try {
+      // Fix 4: Check auth status via cookie
       const { data } = await api.get('/auth/me');
       setUser(data.user);
     } catch {
       setUser(null);
-      localStorage.removeItem('token');
     } finally {
       setLoading(false);
     }
@@ -36,7 +29,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
-      localStorage.setItem('token', data.token);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -47,9 +39,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       const { data } = await api.post('/auth/register', { name, email, password });
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
-      return { success: true };
+      // Registration no longer auto-logs in. It returns success message to check email.
+      return { success: true, message: data.message };
     } catch (error) {
       return { success: false, error: error.response?.data?.error || 'Registration failed' };
     }
@@ -58,7 +49,6 @@ export const AuthProvider = ({ children }) => {
   const googleLogin = async (code) => {
     try {
       const { data } = await api.post('/auth/google', { code });
-      localStorage.setItem('token', data.token);
       setUser(data.user);
       return { success: true };
     } catch (error) {
@@ -78,9 +68,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      await api.post('/auth/logout');
       setUser(null);
-      localStorage.removeItem('token');
-      // await api.post('/auth/logout'); // Only if backend has a persistent logout route
     } catch (error) {
       console.error('Logout failed', error);
     }

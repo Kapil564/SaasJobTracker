@@ -1,61 +1,54 @@
-import { Home, Briefcase, Users, FileText, Mail, BarChart2, Bell, BookOpen, Settings, LayoutDashboard } from "lucide-react";
+import { Home, Briefcase, Users, FileText, Mail, BarChart2, Bell, BookOpen, Settings } from "lucide-react";
 
 const Sidebar = ({ activeTab = 'Dashboard', onTabChange = () => {} }) => {
   return (
-    <aside className="w-[200px] h-full border-r border-slate-200 bg-[var(--surface)] shrink-0 flex flex-col p-4 z-20 hidden md:flex">
-      {/* Brand */}
-      <div className="flex items-center gap-2 mb-8 px-2">
-        <div className="w-10 h-6 rounded-lg bg-[var(--accent-purple)] flex items-center justify-center shadow-[0_0_15px_rgba(124,111,239,0.3)]">
-          <LayoutDashboard size={16} className="text-white" />
-        </div>
-        <h1 className="text-lg font-bold tracking-tight">CareerTransit</h1>
-      </div>
-
+    <aside className="w-[64px] h-full border-r border-slate-200 bg-[var(--surface)] shrink-0 flex flex-col py-2 z-20 hidden md:flex items-center rounded-r-lg">
+      
       {/* Nav Section 1 */}
-      <div className="flex-1 space-y-4">
-        <div>
-          <p className="text-xs uppercase tracking-wider text-slate-500 mb-3 px-1 font-medium">Main</p>
-          <nav className="space-y-1">
-            <NavItem icon={Home} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => onTabChange('Dashboard')} />
-            <NavItem icon={Briefcase} label="Applications" badge="" active={activeTab === 'Applications'} onClick={() => onTabChange('Applications')} />
-            <NavItem icon={Users} label="Interviews" badge="3" badgeColor="bg-[var(--accent-green)]" active={activeTab === 'Interviews'} onClick={() => onTabChange('Interviews')} />
-            <NavItem icon={FileText} label="Resumes" active={activeTab === 'Resumes'} onClick={() => onTabChange('Resumes')} />
-            <NavItem icon={Mail} label="Cover Letters" active={activeTab === 'Cover Letters'} onClick={() => onTabChange('Cover Letters')} />
-          </nav>
-        </div>
+      <div className="flex-1 flex flex-col gap-2 w-full px-2 mt-1.5">
+        <NavItem icon={Home} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => onTabChange('Dashboard')} />
+        <NavItem icon={Briefcase} label="Applications" active={activeTab === 'Applications'} onClick={() => onTabChange('Applications')} />
+        <NavItem icon={Users} label="Interviews" badge="3" badgeColor="bg-[var(--accent-green)]" active={activeTab === 'Interviews'} onClick={() => onTabChange('Interviews')} />
+        <NavItem icon={FileText} label="Resumes" active={activeTab === 'Resumes'} onClick={() => onTabChange('Resumes')} />
+        <NavItem icon={Mail} label="Cover Letters" active={activeTab === 'Cover Letters'} onClick={() => onTabChange('Cover Letters')} />
 
-        <div>
-           <p className="text-xs uppercase tracking-wider text-slate-500 mb-3 px-2 font-medium">Insights</p>
-           <nav className="space-y-1">
-            <NavItem icon={BarChart2} label="Analytics" active={activeTab === 'Analytics'} onClick={() => onTabChange('Analytics')} />
-            <NavItem icon={Bell} label="Job Alerts" badge="5" badgeColor="bg-[var(--accent-yellow)] text-black" active={activeTab === 'Job Alerts'} onClick={() => onTabChange('Job Alerts')} />
-            <NavItem icon={BookOpen} label="Contacts" active={activeTab === 'Contacts'} onClick={() => onTabChange('Contacts')} />
-            <NavItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => onTabChange('Settings')} />
-           </nav>
-        </div>
+        <div className="w-8 h-px bg-slate-200 mx-auto my-2" />
+
+        <NavItem icon={BarChart2} label="Analytics" active={activeTab === 'Analytics'} onClick={() => onTabChange('Analytics')} />
+        <NavItem icon={Bell} label="Job Alerts" badge="5" badgeColor="bg-[var(--accent-yellow)]" active={activeTab === 'Job Alerts'} onClick={() => onTabChange('Job Alerts')} />
+        <NavItem icon={BookOpen} label="Contacts" active={activeTab === 'Contacts'} onClick={() => onTabChange('Contacts')} />
+        <NavItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => onTabChange('Settings')} />
       </div>
 
       {/* User Avatar */}
-      <div className="mt-auto px-2 py-3 flex items-center gap-3 border-t border-slate-200 pt-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-blue)] flex items-center justify-center font-bold text-white shadow-md">
+      <div className="mt-auto flex items-center justify-center pt-4 border-t border-slate-200 w-full px-2">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--accent-purple)] to-[var(--accent-blue)] flex items-center justify-center font-bold text-white shadow-md cursor-pointer" title="Kapil S.">
           KS
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <p className="text-sm font-semibold truncate text-slate-900">Kapil S.</p>
-          <p className="text-xs text-slate-500 truncate">Pro Plan</p>
         </div>
       </div>
     </aside>
   );
 };
 
-// eslint-disable-next-line no-unused-vars
 const NavItem = ({ icon: Icon, label, active, badge, badgeColor, onClick }) => (
-  <button onClick={onClick} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${active ? 'bg-[var(--accent-purple)]/10 text-[var(--accent-purple)] border-l-2 border-[var(--accent-purple)]' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100 border-l-2 border-transparent'}`}>
-    <Icon size={20} />
-    <span className="text-sm font-medium flex-1 text-left">{label}</span>
+  <button 
+    onClick={onClick} 
+    title={label}
+    className={`relative w-full aspect-square flex items-center justify-center rounded-xl transition-all group ${
+      active 
+        ? 'bg-[var(--accent-purple)]/10 text-[var(--accent-purple)]' 
+        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+    }`}
+  >
+    {/* Accent bar for active state */}
+    {active && (
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1/2 bg-[var(--accent-purple)] rounded-r-md" />
+    )}
+    
+    <Icon size={18} className="group-hover:scale-110 transition-transform" />
+    
     {badge && (
-      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColor || 'bg-slate-100 text-slate-900'}`}>
+      <span className={`absolute top-1.5 right-1.5 w-4 h-4 flex items-center justify-center text-[9px] font-bold text-white rounded-full ${badgeColor || 'bg-slate-900'}`}>
         {badge}
       </span>
     )}

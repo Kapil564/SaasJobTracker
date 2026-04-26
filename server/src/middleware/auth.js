@@ -3,12 +3,11 @@ import pool from "../lib/db.js";
 
 export const protect = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = req.cookies?.token;
+    
+    if (!token) {
       return res.status(401).json({ error: "Not authorized. No token provided." });
     }
-
-    const token = authHeader.split(" ")[1];
 
     let decoded;
     try {
@@ -18,7 +17,7 @@ export const protect = async (req, res, next) => {
     }
 
     const { rows } = await pool.query(
-      `SELECT id, name, email, avatar, resume_text FROM users WHERE id = $1`,
+      `SELECT id, name, email, avatar, resume_text, google_access_token, google_refresh_token FROM users WHERE id = $1`,
       [decoded.id]
     );
 

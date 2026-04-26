@@ -21,7 +21,7 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
   const [activeTab, setActiveTab] = useState('Dashboard');
-  
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Triggered from Topbar '+ Add Job' or Kanban '+ Add Job' bottom buttons
   const handleOpenAddJob = () => {
@@ -47,14 +47,21 @@ export default function Dashboard() {
     addToast('Job application deleted', 'success');
   };
 
+  const filteredJobs = jobs.filter(job => {
+    if (!searchQuery) return true;
+    const lowerQuery = searchQuery.toLowerCase();
+    return job.role.toLowerCase().includes(lowerQuery) || 
+           job.company.toLowerCase().includes(lowerQuery);
+  });
+
   const renderContent = () => {
     switch (activeTab) {
       case 'Dashboard':
-        return <DashboardView jobs={jobs} updateJobStatus={updateJobStatus} toggleStar={toggleStar} onAddJob={handleOpenAddJob} addToast={addToast} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <DashboardView jobs={filteredJobs} updateJobStatus={updateJobStatus} toggleStar={toggleStar} onAddJob={handleOpenAddJob} addToast={addToast} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
       case 'Applications':
-        return <ApplicationsView jobs={jobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <ApplicationsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
       case 'Interviews':
-        return <InterviewsView jobs={jobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <InterviewsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
       case 'Resumes':
         return <ResumeView />;
       case 'Settings':
@@ -65,20 +72,22 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-theme flex h-screen overflow-hidden antialiased text-slate-900 selection:bg-[var(--accent-purple)] selection:text-white">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+    <div className="dashboard-theme flex flex-col h-screen overflow-hidden antialiased text-slate-900 selection:bg-[var(--accent-purple)] selection:text-white">
+      <Topbar onAddJob={handleOpenAddJob} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative border-r border-slate-200">
-        <Topbar onAddJob={handleOpenAddJob} />
+      <div className="flex-1 flex overflow-hidden">
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
         
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 kanban-scroll">
-          <div className="max-w-7xl mx-auto h-full flex flex-col">
-            <StatsRow stats={stats} />
-            
-            {renderContent()}
+        <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative border-r border-slate-200 bg-[var(--bg-dashboard)]">
+          <div className="flex-1 overflow-y-auto p-2 sm:py-6 lg:py-8 sm:pr-6 lg:pr-8 pl-2 sm:pl-4 lg:pl-5 kanban-scroll">
+            <div className="max-w-7xl mx-auto w-full h-full flex flex-col">
+              <StatsRow stats={stats} />
+              
+              {renderContent()}
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
 
       <Toast toasts={toasts} />
 

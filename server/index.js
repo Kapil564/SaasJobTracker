@@ -2,15 +2,18 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
 import authRoutes from "./src/routes/auth.js";
 import applicationRoutes from "./src/routes/applications.js";
 import aiRoutes from "./src/routes/ai.js";
+import documentRoutes from "./src/routes/documents.js";
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const corsOrigin = process.env.NODE_ENV === 'development' 
   ? /localhost/
@@ -36,6 +39,7 @@ const authLimiter = rateLimit({
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/applications", generalLimiter, applicationRoutes);
 app.use("/api/ai", generalLimiter, aiRoutes);
+app.use("/api/documents", generalLimiter, documentRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });

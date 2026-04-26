@@ -14,6 +14,7 @@ export default function LoginForm() {
   const handleGoogleLogin = useGoogleLogin({
     scope: 'https://www.googleapis.com/auth/drive.file',
     flow: 'auth-code',
+    prompt: 'consent',
     onSuccess: async (tokenResponse) => {
       setIsLoading(true);
       const result = await googleLogin(tokenResponse.code);

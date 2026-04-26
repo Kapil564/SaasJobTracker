@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "./landing/index.css";
 
@@ -44,7 +44,7 @@ img { max-width: 100%; display: block; }
 }
 
 .dashboard-theme h1, .dashboard-theme h2, .dashboard-theme h3, .dashboard-theme h4, .dashboard-theme h5, .dashboard-theme h6 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Custom Scrollbar for dashboard */
@@ -61,6 +61,21 @@ img { max-width: 100%; display: block; }
 }
 .dashboard-theme ::-webkit-scrollbar-thumb:hover {
   background: #3b4054;
+}
+
+/* Hide scrollbars for specific components */
+.dashboard-theme .kanban-scroll::-webkit-scrollbar,
+.dashboard-theme .hide-scrollbar::-webkit-scrollbar,
+.kanban-scroll::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.dashboard-theme .kanban-scroll,
+.dashboard-theme .hide-scrollbar,
+.kanban-scroll,
+.hide-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
 
 @keyframes fadeUp {

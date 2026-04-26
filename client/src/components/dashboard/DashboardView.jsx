@@ -3,7 +3,7 @@ import KanbanBoard from './KanbanBoard';
 
 export default function DashboardView({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, onEditJob, onDeleteJob }) {
   return (
-    <div className="flex-1 min-h-0 bg-[var(--surface)] border border-slate-200 rounded-2xl overflow-x-auto flex flex-col p-4 animate-fadeUp" style={{ animationDelay: '0.2s' }}>
+    <div className="flex-1 w-full min-h-0 bg-[var(--surface)] border border-slate-200 rounded-2xl overflow-x-auto flex flex-col p-2 animate-fadeUp" style={{ animationDelay: '0.2s' }}>
       <div className="mb-4 px-2 flex justify-between items-center">
         <h3 className="text-lg font-bold">Applications Pipeline</h3>
         <div className="flex items-center gap-3">
