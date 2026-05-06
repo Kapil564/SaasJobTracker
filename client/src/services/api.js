@@ -15,3 +15,9 @@ export const updateApplication = (id, data) =>
 
 export const deleteApplication = (id) =>
   api.delete(`/applications/${id}`).then(res => res.data);
+
+export const getSavedCoverLetter = (id) =>
+  api.get(`/applications/${id}/cover-letter`).then(res => res.data);
+
+export const saveCoverLetter = (id, body) =>
+  api.put(`/applications/${id}/cover-letter`, { body }).then(res => res.data);

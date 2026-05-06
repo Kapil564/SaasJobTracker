@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, FileText, Save, Check } from 'lucide-react';
+import { User, FileText, Save, Check, LogOut } from 'lucide-react';
 
 export default function SettingsView() {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, logout } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     resume_text: ''
@@ -132,6 +132,28 @@ export default function SettingsView() {
             </button>
           </div>
         </form>
+
+        {/* Account Actions Section */}
+        <div className="mt-10 pt-8 border-t border-slate-200">
+          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest flex items-center gap-2 mb-4">
+            <LogOut size={16} className="text-red-500" />
+            Account Actions
+          </h3>
+          
+          <div className="bg-red-50 p-6 rounded-2xl border border-red-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h4 className="text-sm font-bold text-red-900">Sign Out</h4>
+              <p className="text-xs text-red-700 mt-1">End your current session and log out of your account on this device.</p>
+            </div>
+            <button 
+              type="button"
+              onClick={logout}
+              className="px-6 py-2.5 text-sm font-bold text-red-700 bg-white border border-red-200 hover:bg-red-100 rounded-xl transition-all shadow-sm shrink-0 whitespace-nowrap"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

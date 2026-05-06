@@ -1,6 +1,6 @@
 import JobCard from './JobCard';
 
-export default function ApplicationsView({ jobs, toggleStar, onEditJob, onDeleteJob }) {
+export default function ApplicationsView({ jobs, toggleStar, onEditJob, onDeleteJob, onAiOpen }) {
   return (
     <div className="flex-1 min-h-0 bg-[var(--surface)] border border-slate-200 rounded-2xl overflow-y-auto p-4 sm:p-6 animate-fadeUp" style={{ animationDelay: '0.2s' }}>
       <div className="mb-6 flex justify-between items-center">
@@ -11,7 +11,7 @@ export default function ApplicationsView({ jobs, toggleStar, onEditJob, onDelete
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
         {jobs.map(job => (
-          <JobCard key={job.id} job={job} toggleStar={toggleStar} isList onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} />
+          <JobCard key={job.id} job={job} toggleStar={toggleStar} isList onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} onAiOpen={() => onAiOpen(job)} />
         ))}
       </div>
     </div>

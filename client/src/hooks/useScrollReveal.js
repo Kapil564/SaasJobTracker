@@ -9,7 +9,13 @@ export function useScrollReveal(options = {}) {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          if (options.once) {
+            observer.unobserve(entry.target);
+          }
+        } else {
+          if (!options.once) {
+            setIsVisible(false);
+          }
         }
       },
       { threshold: 0.12, ...options }

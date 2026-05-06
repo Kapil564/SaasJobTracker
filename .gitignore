@@ -3,9 +3,7 @@
 /.pnp
 .pnp.js
 
-# Testing
-/coverage
-
+git
 # Production
 /build
 server/.env
@@ -23,3 +21,7 @@ yarn-error.log*
 */package-lock.json
 yarn-error.log
 yarn
+
+# Documentation
+*.md
+!README.md

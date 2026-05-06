@@ -1,6 +1,6 @@
 import JobCard from './JobCard';
 
-export default function InterviewsView({ jobs, toggleStar, onEditJob, onDeleteJob }) {
+export default function InterviewsView({ jobs, toggleStar, onEditJob, onDeleteJob, onAiOpen }) {
   const interviewJobs = jobs.filter(job => job.status === 'interviewing');
 
   return (
@@ -13,7 +13,7 @@ export default function InterviewsView({ jobs, toggleStar, onEditJob, onDeleteJo
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
         {interviewJobs.map(job => (
-          <JobCard key={job.id} job={job} toggleStar={toggleStar} isList onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} />
+          <JobCard key={job.id} job={job} toggleStar={toggleStar} isList onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} onAiOpen={() => onAiOpen(job)} />
         ))}
         {interviewJobs.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center p-8 opacity-50 border-2 border-dashed border-slate-200 rounded-xl h-32">

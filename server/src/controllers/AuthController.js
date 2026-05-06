@@ -47,15 +47,19 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    // Fix 3: Generate email verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     const { rows } = await pool.query(
-      `INSERT INTO users (name, email, password, is_verified, verification_token, verification_token_expires) VALUES ($1, $2, $3, FALSE, $4, $5) RETURNING *`,
-      [name, email, hashedPassword, verificationToken, expires]
+      `INSERT INTO users (name, email, password, is_verified) VALUES ($1, $2, $3, FALSE) RETURNING *`,
+      [name, email, hashedPassword]
     );
     const user = rows[0];
+
+    await pool.query(
+      `INSERT INTO verification_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)`,
+      [user.id, verificationToken, expires]
+    );
 
     // Fix 3: Send verification email
     await sendVerificationEmail(email, verificationToken);
@@ -76,7 +80,7 @@ export const verifyEmail = async (req, res) => {
     if (!token) return res.status(400).json({ error: "No token provided." });
 
     const { rows } = await pool.query(
-      `SELECT id FROM users WHERE verification_token = $1 AND verification_token_expires > NOW()`,
+      `SELECT user_id FROM verification_tokens WHERE token = $1 AND expires_at > NOW()`,
       [token]
     );
 
@@ -84,9 +88,16 @@ export const verifyEmail = async (req, res) => {
       return res.status(400).json({ error: "Invalid or expired link." });
     }
 
+    const userId = rows[0].user_id;
+
     await pool.query(
-      `UPDATE users SET is_verified = TRUE, verification_token = NULL, verification_token_expires = NULL WHERE id = $1`,
-      [rows[0].id]
+      `UPDATE users SET is_verified = TRUE WHERE id = $1`,
+      [userId]
+    );
+
+    await pool.query(
+      `DELETE FROM verification_tokens WHERE user_id = $1`,
+      [userId]
     );
 
     res.json({ message: "Email successfully verified. You can now log in." });
@@ -155,26 +166,20 @@ export const googleAuth = async (req, res) => {
 
     if (code) {
       const { tokens } = await googleClient.getToken({ code, redirect_uri: 'postmessage' });
-      // Fix 1: Encrypt tokens at rest
       googleAccessToken = encrypt(tokens.access_token || null);
       googleRefreshToken = encrypt(tokens.refresh_token || null);
 
-      const ticket = await googleClient.verifyIdToken({
-        idToken: tokens.id_token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-      const payload = ticket.getPayload();
+      const payload = jwt.decode(tokens.id_token);
+      if (!payload) throw new Error("Invalid id_token payload");
+      
       googleId = payload.sub;
       email = payload.email;
       name = payload.name;
       picture = payload.picture;
     } else if (credential) {
-      const ticket = await googleClient.verifyIdToken({
-        idToken: credential,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
+      const payload = jwt.decode(credential);
+      if (!payload) throw new Error("Invalid credential payload");
 
-      const payload = ticket.getPayload();
       googleId = payload.sub;
       email = payload.email;
       name = payload.name;
@@ -203,30 +208,57 @@ export const googleAuth = async (req, res) => {
       picture = data.picture;
     }
 
-    const { rows: existingUsers } = await pool.query(
-      `SELECT * FROM users WHERE google_id = $1 OR email = $2`,
-      [googleId, email]
+    // Clean up expired tokens
+    await pool.query(`DELETE FROM google_tokens WHERE expires_at < NOW()`);
+
+    const { rows: tokenRows } = await pool.query(
+      `SELECT user_id FROM google_tokens WHERE google_id = $1`,
+      [googleId]
     );
-    let user = existingUsers[0];
+
+    let user = null;
+
+    if (tokenRows.length > 0) {
+      const { rows: userRows } = await pool.query(
+        `SELECT * FROM users WHERE id = $1`,
+        [tokenRows[0].user_id]
+      );
+      user = userRows[0];
+    }
+
+    if (!user) {
+      const { rows: existingUsers } = await pool.query(
+        `SELECT * FROM users WHERE email = $1`,
+        [email]
+      );
+      user = existingUsers[0];
+    }
 
     if (!user) {
       const { rows } = await pool.query(
-        `INSERT INTO users (name, email, avatar, google_id, google_access_token, google_refresh_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6, TRUE) RETURNING *`,
-        [name, email, picture, googleId, googleAccessToken, googleRefreshToken]
+        `INSERT INTO users (name, email, avatar, is_verified) VALUES ($1, $2, $3, TRUE) RETURNING *`,
+        [name, email, picture]
       );
       user = rows[0];
     } else {
-      // Fix 3: Prevent hijacking unverified accounts
       if (user.email === email && user.is_verified === false) {
         return res.status(403).json({ error: "An unverified account exists with this email. Please verify it first to link your Google account." });
       }
 
       const { rows } = await pool.query(
-        `UPDATE users SET google_id = COALESCE(google_id, $1), avatar = COALESCE($2, avatar), google_access_token = COALESCE($3, google_access_token), google_refresh_token = COALESCE($4, google_refresh_token), updated_at = NOW() WHERE id = $5 RETURNING *`,
-        [googleId, picture, googleAccessToken, googleRefreshToken, user.id]
+        `UPDATE users SET avatar = COALESCE($1, avatar), updated_at = NOW() WHERE id = $2 RETURNING *`,
+        [picture, user.id]
       );
       user = rows[0];
     }
+
+    await pool.query(
+      `INSERT INTO google_tokens (user_id, google_id, google_access_token, google_refresh_token, expires_at) 
+       VALUES ($1, $2, $3, $4, NOW() + INTERVAL '1 hour')
+       ON CONFLICT (google_id) 
+       DO UPDATE SET google_access_token = EXCLUDED.google_access_token, google_refresh_token = EXCLUDED.google_refresh_token, expires_at = EXCLUDED.expires_at`,
+      [user.id, googleId, googleAccessToken, googleRefreshToken]
+    );
 
     const token = generateToken(user.id);
 
@@ -243,7 +275,7 @@ export const googleAuth = async (req, res) => {
     });
   } catch (error) {
     console.error("Google auth error:", error.response?.data || error.message || error);
-    res.status(401).json({ error: "Invalid Google token." });
+    res.status(401).json({ error: error.message || "Invalid Google token." });
   }
 };
 
@@ -259,7 +291,7 @@ export const logout = async (req, res) => {
 
 // ─── GET Current User (me) ────────────────────────────────────────────────────
 export const getMe = async (req, res) => {
-  res.json({ user: req.user });
+  res.json({ user: safeUser(req.user) });
 };
 
 // ─── UPDATE Profile (resume text, name) ───────────────────────────────────────

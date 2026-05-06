@@ -1,6 +1,6 @@
-import { Home, Briefcase, Users, FileText, Mail, BarChart2, Bell, BookOpen, Settings } from "lucide-react";
+import { Home, Briefcase, Users, FileText, Mail, BarChart2, Settings } from "lucide-react";
 
-const Sidebar = ({ activeTab = 'Dashboard', onTabChange = () => {} }) => {
+const Sidebar = ({ activeTab = 'Dashboard', onTabChange = () => {}, interviewCount = 0 }) => {
   return (
     <aside className="w-[64px] h-full border-r border-slate-200 bg-[var(--surface)] shrink-0 flex flex-col py-2 z-20 hidden md:flex items-center rounded-r-lg">
       
@@ -8,15 +8,15 @@ const Sidebar = ({ activeTab = 'Dashboard', onTabChange = () => {} }) => {
       <div className="flex-1 flex flex-col gap-2 w-full px-2 mt-1.5">
         <NavItem icon={Home} label="Dashboard" active={activeTab === 'Dashboard'} onClick={() => onTabChange('Dashboard')} />
         <NavItem icon={Briefcase} label="Applications" active={activeTab === 'Applications'} onClick={() => onTabChange('Applications')} />
-        <NavItem icon={Users} label="Interviews" badge="3" badgeColor="bg-[var(--accent-green)]" active={activeTab === 'Interviews'} onClick={() => onTabChange('Interviews')} />
+        <NavItem icon={Users} label="Interviews" badge={interviewCount > 0 ? interviewCount : null} badgeColor="bg-[var(--accent-green)]" active={activeTab === 'Interviews'} onClick={() => onTabChange('Interviews')} />
         <NavItem icon={FileText} label="Resumes" active={activeTab === 'Resumes'} onClick={() => onTabChange('Resumes')} />
         <NavItem icon={Mail} label="Cover Letters" active={activeTab === 'Cover Letters'} onClick={() => onTabChange('Cover Letters')} />
 
         <div className="w-8 h-px bg-slate-200 mx-auto my-2" />
 
         <NavItem icon={BarChart2} label="Analytics" active={activeTab === 'Analytics'} onClick={() => onTabChange('Analytics')} />
-        <NavItem icon={Bell} label="Job Alerts" badge="5" badgeColor="bg-[var(--accent-yellow)]" active={activeTab === 'Job Alerts'} onClick={() => onTabChange('Job Alerts')} />
-        <NavItem icon={BookOpen} label="Contacts" active={activeTab === 'Contacts'} onClick={() => onTabChange('Contacts')} />
+
+
         <NavItem icon={Settings} label="Settings" active={activeTab === 'Settings'} onClick={() => onTabChange('Settings')} />
       </div>
 

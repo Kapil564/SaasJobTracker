@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 
 export default function LandingFooter() {
   return (
-    <footer className="bg-ink text-cream pt-20 pb-10 border-t border-ink/10">
+    <footer className="bg-ink text-cream pt-10 pb-3 border-t border-ink/10">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid md:grid-cols-4 gap-8 mb-3">
 
           {/* Brand Col */}
           <div className="md:col-span-1">
@@ -61,7 +61,7 @@ export default function LandingFooter() {
 
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-cream/40 text-sm font-sans">
             &copy; {new Date().getFullYear()} CareerTransit. All rights reserved.
           </div>

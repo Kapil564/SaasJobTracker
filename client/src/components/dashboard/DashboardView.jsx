@@ -1,7 +1,7 @@
 import { Filter } from 'lucide-react';
 import KanbanBoard from './KanbanBoard';
 
-export default function DashboardView({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, onEditJob, onDeleteJob }) {
+export default function DashboardView({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, onEditJob, onDeleteJob, onAiOpen }) {
   return (
     <div className="flex-1 w-full min-h-0 bg-[var(--surface)] border border-slate-200 rounded-2xl overflow-x-auto flex flex-col p-2 animate-fadeUp" style={{ animationDelay: '0.2s' }}>
       <div className="mb-4 px-2 flex justify-between items-center">
@@ -22,6 +22,7 @@ export default function DashboardView({ jobs, updateJobStatus, toggleStar, onAdd
           addToast={addToast}
           onEditJob={onEditJob}
           onDeleteJob={onDeleteJob}
+          onAiOpen={onAiOpen}
         />
       </div>
     </div>

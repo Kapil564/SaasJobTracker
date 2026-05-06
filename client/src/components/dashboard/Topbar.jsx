@@ -1,4 +1,4 @@
-import { Search, Bell, Plus,LayoutDashboard } from 'lucide-react';
+import { Search, Plus, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 
 const Topbar = ({ onAddJob, searchQuery, onSearchChange }) => {
@@ -25,11 +25,6 @@ const Topbar = ({ onAddJob, searchQuery, onSearchChange }) => {
 
       {/* Actions (Right) */}
       <div className="flex items-center justify-end gap-4 flex-1">
-        <button className="relative p-2 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
-          <Bell size={16} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--accent-red)] border-2 border-[var(--surface)]"></span>
-        </button>
-
         <button 
           onClick={onAddJob}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white text-black border border-slate-200 text-sm font-semibold hover:bg-blue-600 hover:text-white transition-all active:scale-95 hover:border-blue-600"

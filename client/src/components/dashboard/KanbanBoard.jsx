@@ -22,7 +22,7 @@ const COLUMNS = [
   { id: 'rejected', title: 'Rejected', color: 'bg-[var(--accent-red)]' },
 ];
 
-const KanbanBoard = ({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, onEditJob, onDeleteJob }) => {
+const KanbanBoard = ({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, onEditJob, onDeleteJob, onAiOpen }) => {
   const [activeId, setActiveId] = useState(null);
 
   const sensors = useSensors(
@@ -81,6 +81,7 @@ const KanbanBoard = ({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, on
             idx={idx}
             onEditJob={onEditJob}
             onDeleteJob={onDeleteJob}
+            onAiOpen={onAiOpen}
           />
         ))}
       </div>
@@ -91,7 +92,7 @@ const KanbanBoard = ({ jobs, updateJobStatus, toggleStar, onAddJob, addToast, on
   );
 };
 
-const Column = ({ col, jobs, toggleStar, onAddJob, idx, onEditJob, onDeleteJob }) => {
+const Column = ({ col, jobs, toggleStar, onAddJob, idx, onEditJob, onDeleteJob, onAiOpen }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: col.id,
     data: { type: 'Column', column: col }
@@ -120,7 +121,7 @@ const Column = ({ col, jobs, toggleStar, onAddJob, idx, onEditJob, onDeleteJob }
       >
         <SortableContext items={jobs.map(j => j.id)}>
           {jobs.map(job => (
-            <JobCard key={job.id} job={job} toggleStar={toggleStar} onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} />
+            <JobCard key={job.id} job={job} toggleStar={toggleStar} onEdit={() => onEditJob(job)} onDelete={() => onDeleteJob(job.id)} onAiOpen={() => onAiOpen(job)} />
           ))}
         </SortableContext>
         

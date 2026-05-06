@@ -17,7 +17,14 @@ export const protect = async (req, res, next) => {
     }
 
     const { rows } = await pool.query(
-      `SELECT id, name, email, avatar, resume_text, google_access_token, google_refresh_token FROM users WHERE id = $1`,
+      `
+      SELECT 
+        u.id, u.name, u.email, u.avatar, u.resume_text, u.role, u.is_verified,
+        g.google_access_token, g.google_refresh_token
+      FROM users u
+      LEFT JOIN google_tokens g ON u.id = g.user_id AND g.expires_at > NOW()
+      WHERE u.id = $1
+      `,
       [decoded.id]
     );
 

@@ -18,7 +18,7 @@ export default function StatsBand() {
       >
         {stats.map((stat, idx) => (
           <div key={idx} className="text-center">
-            <div className="text-4xl md:text-5xl font-serif font-black text-ink mb-2">
+            <div className="text-4xl md:text-5xl font-sans font-black tracking-tight text-ink mb-2">
               <span className="text-gold">{stat.value.charAt(0)}</span>
               {stat.value.substring(1)}
             </div>

@@ -112,6 +112,7 @@ export default function AddJobModal({ onClose, onSaveJob, addToast, initialData 
   });
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -137,21 +138,28 @@ export default function AddJobModal({ onClose, onSaveJob, addToast, initialData 
     const e = {};
     if (!form.role.trim()) e.role = "Role is required";
     if (!form.company.trim()) e.company = "Company is required";
+    if (!form.applyUrl.trim()) e.applyUrl = "Job URL is required";
     return e;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     
+    setLoading(true);
     // Map data back to match the app's internal representation
     const mappedData = {
       ...form,
       workType: form.jobType,
       status: form.stage.toLowerCase(),
+      job_url: form.applyUrl,
     };
 
-    if (onSaveJob) onSaveJob(mappedData);
+    if (onSaveJob) {
+      await onSaveJob(mappedData);
+    }
+    
+    setLoading(false);
     if (addToast) addToast(initialData ? 'Job updated successfully!' : 'Job application added successfully!', 'success');
     
     setSubmitted(true);
@@ -295,8 +303,9 @@ export default function AddJobModal({ onClose, onSaveJob, addToast, initialData 
         </div>
 
         {/* Apply URL */}
-        <Input label="JOB URL" icon="🔗" placeholder="https://jobs.company.com/..."
+        <Input label="JOB URL" required icon="🔗" placeholder="https://jobs.company.com/..."
           value={form.applyUrl} onChange={set("applyUrl")} />
+        {errors.applyUrl && <span style={styles.error}>{errors.applyUrl}</span>}
 
         {/* Deadline */}
         <Input label="APPLICATION DEADLINE" icon="📅" placeholder="Pick a date"
@@ -344,10 +353,10 @@ export default function AddJobModal({ onClose, onSaveJob, addToast, initialData 
         {/* Actions */}
         <div style={{ display: "flex", gap: "10px" }}>
           {onClose && (
-            <button onClick={onClose} style={styles.cancelBtn}>Cancel</button>
+            <button onClick={onClose} disabled={loading} style={{...styles.cancelBtn, opacity: loading ? 0.5 : 1}}>Cancel</button>
           )}
-          <button onClick={handleSubmit} style={styles.submitBtn}>
-            {initialData ? 'Update Job →' : 'Save Job →'}
+          <button onClick={handleSubmit} disabled={loading} style={{...styles.submitBtn, opacity: loading ? 0.5 : 1}}>
+            {loading ? 'Scraping Job Details...' : (initialData ? 'Update Job →' : 'Save Job →')}
           </button>
         </div>
 

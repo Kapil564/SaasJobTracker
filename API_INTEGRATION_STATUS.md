@@ -34,11 +34,11 @@ This document tracks all the endpoints available on the backend server and their
 ## 🤖 AI Endpoints (`/api/ai`)
 *These endpoints power the AI Assistant features.*
 
-- [ ] `GET /api/ai/:applicationId/cover-letter` — Generates a customized cover letter for a specific application.
-- [ ] `GET /api/ai/:applicationId/score` — Analyzes compatibility and generates a match score between the user and the job.
-- [ ] `GET /api/ai/:applicationId/prep` — Generates bespoke interview preparation material.
-- [ ] `GET /api/ai/:applicationId/red-flags` — Identifies potential red flags inside the parsed job description.
-- [ ] `POST /api/ai/:applicationId/email-reply` — Drafts intelligent contextual email replies to recruiters.
+- [x] `GET /api/ai/:applicationId/cover-letter` — Generates a customized cover letter for a specific application.
+- [x] `GET /api/ai/:applicationId/score` — Analyzes compatibility and generates a match score between the user and the job.
+- [x] `GET /api/ai/:applicationId/prep` — Generates bespoke interview preparation material.
+- [x] `GET /api/ai/:applicationId/red-flags` — Identifies potential red flags inside the parsed job description.
+- [x] `POST /api/ai/:applicationId/email-reply` — Drafts intelligent contextual email replies to recruiters.
 
 ---
 

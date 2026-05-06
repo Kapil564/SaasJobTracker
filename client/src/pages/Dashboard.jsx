@@ -6,8 +6,10 @@ import DashboardView from '../components/dashboard/DashboardView';
 import ApplicationsView from '../components/dashboard/ApplicationsView';
 import InterviewsView from '../components/dashboard/InterviewsView';
 import ResumeView from '../components/dashboard/ResumeView';
+import CoverLettersView from '../components/dashboard/CoverLettersView';
 import ComingSoonView from '../components/dashboard/ComingSoonView';
 import AddJobModal from '../components/dashboard/AddJobModal';
+import AiAssistantModal from '../components/dashboard/AiAssistantModal';
 import SettingsView from '../components/dashboard/SettingsView';
 import Toast from '../components/dashboard/Toast';
 
@@ -22,6 +24,9 @@ export default function Dashboard() {
   const [editingJob, setEditingJob] = useState(null);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiJob, setAiJob] = useState(null);
 
   // Triggered from Topbar '+ Add Job' or Kanban '+ Add Job' bottom buttons
   const handleOpenAddJob = () => {
@@ -47,6 +52,11 @@ export default function Dashboard() {
     addToast('Job application deleted', 'success');
   };
 
+  const handleOpenAiModal = (job) => {
+    setAiJob(job);
+    setShowAiModal(true);
+  };
+
   const filteredJobs = jobs.filter(job => {
     if (!searchQuery) return true;
     const lowerQuery = searchQuery.toLowerCase();
@@ -57,13 +67,15 @@ export default function Dashboard() {
   const renderContent = () => {
     switch (activeTab) {
       case 'Dashboard':
-        return <DashboardView jobs={filteredJobs} updateJobStatus={updateJobStatus} toggleStar={toggleStar} onAddJob={handleOpenAddJob} addToast={addToast} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <DashboardView jobs={filteredJobs} updateJobStatus={updateJobStatus} toggleStar={toggleStar} onAddJob={handleOpenAddJob} addToast={addToast} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} onAiOpen={handleOpenAiModal} />;
       case 'Applications':
-        return <ApplicationsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <ApplicationsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} onAiOpen={handleOpenAiModal} />;
       case 'Interviews':
-        return <InterviewsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} />;
+        return <InterviewsView jobs={filteredJobs} toggleStar={toggleStar} onEditJob={handleEditJob} onDeleteJob={handleDeleteJob} onAiOpen={handleOpenAiModal} />;
       case 'Resumes':
         return <ResumeView />;
+      case 'Cover Letters':
+        return <CoverLettersView jobs={filteredJobs} addToast={addToast} />;
       case 'Settings':
         return <SettingsView />;
       default:
@@ -76,7 +88,7 @@ export default function Dashboard() {
       <Topbar onAddJob={handleOpenAddJob} searchQuery={searchQuery} onSearchChange={setSearchQuery} />
       
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} interviewCount={stats?.interviews || 0} />
         
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative border-r border-slate-200 bg-[var(--bg-dashboard)]">
           <div className="flex-1 overflow-y-auto p-2 sm:py-6 lg:py-8 sm:pr-6 lg:pr-8 pl-2 sm:pl-4 lg:pl-5 kanban-scroll">
@@ -97,6 +109,14 @@ export default function Dashboard() {
           onSaveJob={handleSaveJobData}
           addToast={addToast}
           initialData={editingJob}
+        />
+      )}
+
+      {showAiModal && (
+        <AiAssistantModal 
+          job={aiJob} 
+          onClose={() => { setShowAiModal(false); setAiJob(null); }} 
+          addToast={addToast} 
         />
       )}
     </div>

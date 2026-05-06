@@ -25,17 +25,17 @@ const TAG_COLORS = [
 ];
 
 const STAGE_STYLES = {
-  Saved:        { bg: "#E8E8FF", color: "#4b4bcc", dot: "#6b6bff", wrapperBorder: "#c5c5f5" },
-  Applied:      { bg: "#DCEEFF", color: "#1a6fb5", dot: "#3b9eff", wrapperBorder: "#b0d8ff" },
-  Screening:    { bg: "#FFF3CC", color: "#9a6c00", dot: "#f5b800", wrapperBorder: "#f5dfa0" },
+  Saved: { bg: "#E8E8FF", color: "#4b4bcc", dot: "#6b6bff", wrapperBorder: "#c5c5f5" },
+  Applied: { bg: "#DCEEFF", color: "#1a6fb5", dot: "#3b9eff", wrapperBorder: "#b0d8ff" },
+  Screening: { bg: "#FFF3CC", color: "#9a6c00", dot: "#f5b800", wrapperBorder: "#f5dfa0" },
   Interviewing: { bg: "#E8F5E9", color: "#1a7a47", dot: "#22c55e", wrapperBorder: "#a8e6be" },
-  Offer:        { bg: "#E8FFF3", color: "#0d7a5f", dot: "#10b981", wrapperBorder: "#86efcb" },
-  Rejected:     { bg: "#FFE5EC", color: "#b51a3b", dot: "#f43f5e", wrapperBorder: "#ffc0cb" },
+  Offer: { bg: "#E8FFF3", color: "#0d7a5f", dot: "#10b981", wrapperBorder: "#86efcb" },
+  Rejected: { bg: "#FFE5EC", color: "#b51a3b", dot: "#f43f5e", wrapperBorder: "#ffc0cb" },
 };
 
 const JOB_TYPE_CONFIG = {
-  Remote:   { emoji: "🚀", bg: "#EEF6FD", color: "#1a6fb5" },
-  Hybrid:   { emoji: "🏢", bg: "#F0FDF4", color: "#1a7a47" },
+  Remote: { emoji: "🚀", bg: "#EEF6FD", color: "#1a6fb5" },
+  Hybrid: { emoji: "🏢", bg: "#F0FDF4", color: "#1a7a47" },
   "On-site": { emoji: "📍", bg: "#FFF3CC", color: "#9a6c00" },
 };
 
@@ -70,6 +70,14 @@ function DeleteIcon() {
   );
 }
 
+function SparklesIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+    </svg>
+  );
+}
+
 function IconBtn({ children, onPointerDown, label }) {
   return (
     <button aria-label={label} onPointerDown={onPointerDown} style={{
@@ -80,8 +88,8 @@ function IconBtn({ children, onPointerDown, label }) {
       cursor: "pointer", background: "white", padding: 0, flexShrink: 0,
       transition: "all 0.2s"
     }}
-    onMouseEnter={(e) => e.currentTarget.style.background = "#f5f5f5"}
-    onMouseLeave={(e) => e.currentTarget.style.background = "white"}
+      onMouseEnter={(e) => e.currentTarget.style.background = "#f5f5f5"}
+      onMouseLeave={(e) => e.currentTarget.style.background = "white"}
     >
       {children}
     </button>
@@ -104,7 +112,7 @@ function JobTypeBadge({ jobType }) {
   );
 }
 
-const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
+const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete, onAiOpen }) => {
   const [showNotes, setShowNotes] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging: sortableIsDragging } = useSortable({
     id: isOverlay ? `overlay-${job.id}` : job.id,
@@ -125,18 +133,30 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
   };
 
   // Map job data to card design props
-  const date = job.date || job.created_at || "Recent";
+  const formatJobDate = (d) => {
+    if (!d) return "Recent";
+    try {
+      const parsed = new Date(d);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    } catch {
+      // ignore
+    }
+    return d;
+  };
+  const date = formatJobDate(job.date || job.applied_date || job.created_at);
   const company = job.company || "Unknown";
   const title = job.role || "Role";
   const logoText = company.charAt(0).toUpperCase();
   // Deterministic logo bg color based on company name
   const logoBgColors = ["#232F3E", "#4285F4", "#635BFF", "#191919", "#E1306C", "#0077B5"];
   const logoBg = logoBgColors[company.length % logoBgColors.length];
-  
+
   // Deterministic card bg color
   const cardBgId = typeof job.id === 'number' ? job.id : String(job.id).charCodeAt(0);
   const cardBg = CARD_COLORS[cardBgId % CARD_COLORS.length];
-  
+
   const tags = [job.employmentType, job.experienceLevel].filter(Boolean);
   const salary = job.salary || "";
   const location = job.location ? job.location.split(',')[0] : "";
@@ -151,14 +171,14 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
   const stageStyle = STAGE_STYLES[stage] || STAGE_STYLES["Saved"];
 
   return (
-    <div 
-      ref={isList ? undefined : setNodeRef} 
+    <div
+      ref={isList ? undefined : setNodeRef}
       style={{
         ...styles.wrapper,
         ...dragStyle,
         border: `1.5px solid ${stageStyle.wrapperBorder}`,
       }}
-      {...(isList ? {} : attributes)} 
+      {...(isList ? {} : attributes)}
       {...(isList ? {} : listeners)}
     >
       <link
@@ -173,14 +193,9 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
         <div style={styles.topRow}>
           <span style={styles.date}>{date}</span>
           <div style={{ display: "flex", gap: "6px" }}>
-            {onEdit && (
-              <IconBtn label="Edit job" onPointerDown={(e) => { e.stopPropagation(); onEdit(); }}>
-                <EditIcon />
-              </IconBtn>
-            )}
-            {onDelete && (
-              <IconBtn label="Delete job" onPointerDown={(e) => { e.stopPropagation(); onDelete(); }}>
-                <DeleteIcon />
+            {onAiOpen && (
+              <IconBtn label="AI Assistant" onPointerDown={(e) => { e.stopPropagation(); onAiOpen(); }}>
+                <SparklesIcon />
               </IconBtn>
             )}
             {toggleStar && (
@@ -220,8 +235,8 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
             <p style={styles.salary} className="truncate">{salary}</p>
             <p style={styles.location} className="truncate">{location}</p>
           </div>
-          <button 
-            style={styles.detailsBtn} 
+          <button
+            style={styles.detailsBtn}
             onPointerDown={(e) => { e.stopPropagation(); setShowNotes(!showNotes); }}
           >
             {showNotes ? "Hide" : "Details"}
@@ -231,7 +246,7 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
         {/* Notes Expansion */}
         {showNotes && (
           <div style={styles.notesContainer} onPointerDown={(e) => e.stopPropagation()}>
-            <strong style={{ color: "#111", fontWeight: 600 }}>Notes:</strong><br/>
+            <strong style={{ color: "#111", fontWeight: 600 }}>Notes:</strong><br />
             {job.notes ? job.notes : <span style={{ color: "#888", fontStyle: "italic" }}>No notes added.</span>}
           </div>
         )}
@@ -254,6 +269,18 @@ const JobCard = ({ job, toggleStar, isOverlay, isList, onEdit, onDelete }) => {
           }} />
           {stage}
         </span>
+        <div style={{ display: "flex", gap: "6px" }}>
+          {onEdit && (
+            <IconBtn label="Edit job" onPointerDown={(e) => { e.stopPropagation(); onEdit(); }}>
+              <EditIcon />
+            </IconBtn>
+          )}
+          {onDelete && (
+            <IconBtn label="Delete job" onPointerDown={(e) => { e.stopPropagation(); onDelete(); }}>
+              <DeleteIcon />
+            </IconBtn>
+          )}
+        </div>
       </div>
 
     </div>
@@ -274,8 +301,11 @@ const styles = {
   },
   stageStrip: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingBottom: "2px",
+    paddingLeft: "4px",
+    paddingRight: "4px",
   },
   card: {
     borderRadius: "18px",
@@ -374,11 +404,11 @@ const styles = {
     flexShrink: 0,
   },
   notesContainer: {
-    marginTop: "12px", 
-    padding: "12px", 
-    background: "rgba(0,0,0,0.04)", 
-    borderRadius: "12px", 
-    fontSize: "12px", 
+    marginTop: "12px",
+    padding: "12px",
+    background: "rgba(0,0,0,0.04)",
+    borderRadius: "12px",
+    fontSize: "12px",
     color: "#444",
     border: "1px solid rgba(0,0,0,0.05)",
     lineHeight: 1.4,
