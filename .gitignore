@@ -25,3 +25,4 @@ yarn
 # Documentation
 *.md
 !README.md
+!CONTRIBUTING.md
