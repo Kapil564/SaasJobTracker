@@ -1,4 +1,4 @@
-# CareerTransit - SaaS Job Tracker
+# CareerTransit -  Job Tracker
 
 A comprehensive job application tracking platform built with React and Node.js, featuring AI-powered insights, drag-and-drop Kanban boards, and seamless authentication.
 
@@ -47,7 +47,7 @@ A comprehensive job application tracking platform built with React and Node.js, 
 
 ```bash
 git clone <repository-url>
-cd SaasJobTracker
+cd JobTracker
 ```
 
 ### 2. Backend Setup
@@ -139,7 +139,7 @@ npm run lint
 ## 📁 Project Structure
 
 ```
-SaasJobTracker/
+JobTracker/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── components/     # Reusable UI components
@@ -176,4 +176,4 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 - Built with modern web technologies
 - AI features powered by integrated language models
 - Database hosted on Neon for serverless PostgreSQL</content>
-<parameter name="filePath">c:\Users\kapil\Desktop\projects\SaasJobTracker\README.md
+<parameter name="filePath">c:\Users\kapil\Desktop\projects\JobTracker\README.md
